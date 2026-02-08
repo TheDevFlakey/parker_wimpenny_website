@@ -10,18 +10,33 @@ export default function NewsletterSignup() {
     const [message, setMessage] = useState("");
     const [isError, setIsError] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (/\S+@\S+\.\S+/.test(email)) {
-            setMessage("✅ Thank you for subscribing!");
-            setIsError(false);
+            const res = await fetch("/api/newsletter/subscribe", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await res.json();
+
+            setMessage(data.message);
+
+            if (data.status) {
+                setIsError(false);
+            } else {
+                setIsError(true);
+            }
+
             setEmail("");
-            setTimeout(() => setMessage(""), 2500);
         } else {
             setMessage("⚠️ Please enter a valid email address.");
             setIsError(true);
-            setTimeout(() => setMessage(""), 2500);
         }
+        setTimeout(() => setMessage(""), 2500);
     };
 
     return (
