@@ -12,6 +12,7 @@ import { sub } from "framer-motion/client";
 import { formatDate } from "@/utils/formatDate";
 import { SubscribersList } from "@/components/admin/newsletter/subscribersList";
 import { SendForm } from "@/components/admin/newsletter/sendForm";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
 
 interface Message {
     id: number;
@@ -33,6 +34,8 @@ const AdminDashboardPage = () => {
     const { status } = useSession();
     const [messages, setMessages] = useState<Message[]>([]);
     const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
+    const [sectionsOpen, setSectionsOpen] = useState({ messages: false, newsletter: false });
+
     const router = useRouter();
 
     useEffect(() => {
@@ -97,9 +100,26 @@ const AdminDashboardPage = () => {
 
             {messages.length > 0 ? (
                 <div className="container bg-accent rounded-lg border border-primary/20 mx-auto p-4">
-                    <h2 className="text-2xl font-bold mb-4 text-primary">Contact Form Messages</h2>
+                    <h2 className="md:text-2xl font-bold text-primary flex justify-between items-center">
+                        Contact Form Messages
+                        {sectionsOpen.messages ? (
+                            <FaChevronUp
+                                onClick={() => {
+                                    setSectionsOpen((prev) => ({ ...prev, messages: !prev.messages }));
+                                }}
+                                className="text-primary text-xl md:text-2xl p-1 rounded-full border border-primary cursor-pointer"
+                            />
+                        ) : (
+                            <FaChevronDown
+                                onClick={() => {
+                                    setSectionsOpen((prev) => ({ ...prev, messages: !prev.messages }));
+                                }}
+                                className="text-primary text-xl md:text-2xl p-1 rounded-full border border-primary cursor-pointer"
+                            />
+                        )}
+                    </h2>
 
-                    <MessagesList messages={messages} onRespond={markAsResponded} />
+                    {sectionsOpen.messages && <MessagesList messages={messages} onRespond={markAsResponded} />}
                 </div>
             ) : (
                 <div className="container rounded-lg border border-primary/20 bg-accent mx-auto p-4 flex flex-col items-center">
@@ -110,11 +130,31 @@ const AdminDashboardPage = () => {
 
             {subscribers.length > 0 ? (
                 <div className="container bg-accent rounded-lg border border-primary/20 mx-auto p-4 mt-10">
-                    <SendForm />
-
-                    <h2 className="text-2xl font-bold mb-4 text-primary">Newsletter Subscribers</h2>
-
-                    <SubscribersList subscribers={subscribers} />
+                    <h3 className="md:text-2xl font-bold mb-1 text-primary flex justify-between items-center">
+                        Send Newsletter
+                        {sectionsOpen.newsletter ? (
+                            <FaChevronUp
+                                onClick={() => {
+                                    setSectionsOpen((prev) => ({ ...prev, newsletter: !prev.newsletter }));
+                                }}
+                                className="text-primary text-xl md:text-2xl p-1 rounded-full border border-primary cursor-pointer"
+                            />
+                        ) : (
+                            <FaChevronDown
+                                onClick={() => {
+                                    setSectionsOpen((prev) => ({ ...prev, newsletter: !prev.newsletter }));
+                                }}
+                                className="text-primary text-xl md:text-2xl p-1 rounded-full border border-primary cursor-pointer"
+                            />
+                        )}
+                    </h3>
+                    {sectionsOpen.newsletter && (
+                        <>
+                            <SendForm />
+                            <h2 className="text-2xl font-bold mb-4 text-primary">Newsletter Subscribers</h2>
+                            <SubscribersList subscribers={subscribers} />
+                        </>
+                    )}
                 </div>
             ) : (
                 <div className="container rounded-lg border border-primary/20 bg-accent mx-auto p-4 mt-10 flex flex-col items-center">

@@ -3,7 +3,6 @@
 export const SendForm = () => {
     return (
         <div className="mb-4">
-            <h3 className="text-2xl font-bold mb-1 text-primary">Send Newsletter</h3>
             <p className="text-secondary mb-2 text-sm">Write a message to send to all newsletter subscribers.</p>
             <input
                 type="text"

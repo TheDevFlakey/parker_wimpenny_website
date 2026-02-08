@@ -32,7 +32,7 @@ export const MessagesList = ({ messages, onRespond }: MessagesListProps) => {
 
     return (
         <>
-            <div className="flex gap-2 border border-primary/20 rounded-lg px-3 mb-4 items-center">
+            <div className="flex gap-2 mt-4 border border-primary/20 rounded-lg px-3 mb-4 items-center">
                 <FaMagnifyingGlass className="text-secondary" />
                 <input
                     type="text"
