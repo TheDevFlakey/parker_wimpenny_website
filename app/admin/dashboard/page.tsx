@@ -13,6 +13,18 @@ import { formatDate } from "@/utils/formatDate";
 import { SubscribersList } from "@/components/admin/newsletter/subscribersList";
 import { SendForm } from "@/components/admin/newsletter/sendForm";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
+import { QuotesSection } from "@/components/admin/quotesSection";
+import { MessagesSection } from "@/components/admin/messagesSection";
+import { NewsletterSection } from "@/components/admin/newsletterSection";
+
+interface Quote {
+    id: number;
+    name: string;
+    email: string;
+    phone_number: string;
+    message: string;
+    createdAt: string;
+}
 
 interface Message {
     id: number;
@@ -34,7 +46,17 @@ const AdminDashboardPage = () => {
     const { status } = useSession();
     const [messages, setMessages] = useState<Message[]>([]);
     const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
-    const [sectionsOpen, setSectionsOpen] = useState({ messages: false, newsletter: false });
+    const [sectionsOpen, setSectionsOpen] = useState({ messages: false, newsletter: false, quotes: false });
+    const [quotes, setQuotes] = useState<Quote[]>([
+        {
+            id: 1,
+            name: "Adam Wimpenny",
+            email: "adamwimps2@outlook.com",
+            phone_number: "07545410930",
+            message: "",
+            createdAt: new Date().toISOString(),
+        },
+    ]);
 
     const router = useRouter();
 
@@ -91,77 +113,31 @@ const AdminDashboardPage = () => {
     }
 
     return (
-        <div className="min-h-screen flex flex-col pt-30 pb-10 px-4 container mx-auto">
+        <div className="flex flex-col pt-30 pb-10 px-4 container mx-auto">
             <Hero
                 icon={<FaShieldAlt className="text-4xl text-primary" />}
                 title="Admin Dashboard"
                 description="Welcome to the admin dashboard. Here you can manage your contact form messages and send newsletters."
             />
 
-            {messages.length > 0 ? (
-                <div className="container bg-accent rounded-lg border border-primary/20 mx-auto p-4">
-                    <h2 className="md:text-2xl font-bold text-primary flex justify-between items-center">
-                        Contact Form Messages
-                        {sectionsOpen.messages ? (
-                            <FaChevronUp
-                                onClick={() => {
-                                    setSectionsOpen((prev) => ({ ...prev, messages: !prev.messages }));
-                                }}
-                                className="text-primary text-xl md:text-2xl p-1 rounded-full border border-primary cursor-pointer"
-                            />
-                        ) : (
-                            <FaChevronDown
-                                onClick={() => {
-                                    setSectionsOpen((prev) => ({ ...prev, messages: !prev.messages }));
-                                }}
-                                className="text-primary text-xl md:text-2xl p-1 rounded-full border border-primary cursor-pointer"
-                            />
-                        )}
-                    </h2>
+            <QuotesSection
+                quotes={quotes}
+                isOpen={sectionsOpen.quotes}
+                onToggle={() => setSectionsOpen((prev) => ({ ...prev, quotes: !prev.quotes }))}
+            />
 
-                    {sectionsOpen.messages && <MessagesList messages={messages} onRespond={markAsResponded} />}
-                </div>
-            ) : (
-                <div className="container rounded-lg border border-primary/20 bg-accent mx-auto p-4 flex flex-col items-center">
-                    <h2 className="text-2xl font-bold mb-4 text-primary">Contact Form Messages</h2>
-                    <p className="text-secondary">There are no contact form messages to display.</p>
-                </div>
-            )}
+            <MessagesSection
+                messages={messages}
+                isOpen={sectionsOpen.messages}
+                onToggle={() => setSectionsOpen((prev) => ({ ...prev, messages: !prev.messages }))}
+                onRespond={markAsResponded}
+            />
 
-            {subscribers.length > 0 ? (
-                <div className="container bg-accent rounded-lg border border-primary/20 mx-auto p-4 mt-10">
-                    <h3 className="md:text-2xl font-bold mb-1 text-primary flex justify-between items-center">
-                        Send Newsletter
-                        {sectionsOpen.newsletter ? (
-                            <FaChevronUp
-                                onClick={() => {
-                                    setSectionsOpen((prev) => ({ ...prev, newsletter: !prev.newsletter }));
-                                }}
-                                className="text-primary text-xl md:text-2xl p-1 rounded-full border border-primary cursor-pointer"
-                            />
-                        ) : (
-                            <FaChevronDown
-                                onClick={() => {
-                                    setSectionsOpen((prev) => ({ ...prev, newsletter: !prev.newsletter }));
-                                }}
-                                className="text-primary text-xl md:text-2xl p-1 rounded-full border border-primary cursor-pointer"
-                            />
-                        )}
-                    </h3>
-                    {sectionsOpen.newsletter && (
-                        <>
-                            <SendForm />
-                            <h2 className="text-2xl font-bold mb-4 text-primary">Newsletter Subscribers</h2>
-                            <SubscribersList subscribers={subscribers} />
-                        </>
-                    )}
-                </div>
-            ) : (
-                <div className="container rounded-lg border border-primary/20 bg-accent mx-auto p-4 mt-10 flex flex-col items-center">
-                    <h2 className="text-2xl font-bold mb-4 text-primary">Newsletter Subscribers</h2>
-                    <p className="text-secondary">There are no newsletter subscribers to display.</p>
-                </div>
-            )}
+            <NewsletterSection
+                subscribers={subscribers}
+                isOpen={sectionsOpen.newsletter}
+                onToggle={() => setSectionsOpen((prev) => ({ ...prev, newsletter: !prev.newsletter }))}
+            />
         </div>
     );
 };
