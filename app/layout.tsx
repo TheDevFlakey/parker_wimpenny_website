@@ -7,6 +7,7 @@ import { Provider } from "@/components/ui/provider";
 import Footer from "@/components/footer/footer";
 import { Header } from "@/components/header/header";
 import { Analytics } from "@vercel/analytics/next";
+import { AuthProvider } from "@/components/authProvider";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -32,12 +33,14 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-                <Provider>
-                    <Header />
-                    {children}
-                    <Footer />
-                </Provider>
-                <Analytics />
+                <AuthProvider>
+                    <Provider>
+                        <Header />
+                        {children}
+                        <Footer />
+                    </Provider>
+                    <Analytics />
+                </AuthProvider>
             </body>
         </html>
     );

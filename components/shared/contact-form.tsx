@@ -13,6 +13,7 @@ export const ContactForm = () => {
         phone: "",
         message: "",
     });
+    const [success, setSuccess] = useState(false);
 
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,10 +57,17 @@ export const ContactForm = () => {
         // TEMPORARY submit logic
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        console.log("Form submitted:", formData);
+        await fetch("/api/contactForm/send", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+        });
 
         setIsSubmitting(false);
         setFormData({ name: "", email: "", phone: "", message: "" });
+        setSuccess(true);
     };
 
     return (
@@ -70,58 +78,66 @@ export const ContactForm = () => {
             description="Want a quote or have a question? Fill out the form below and we'll get back to you as soon as possible."
         >
             <div className="container p-4 mx-auto flex flex-col gap-4 text-sm bg-accent rounded-lg border border-primary/20">
-                {errors.name && <span className="text-xs text-red-400 mr-auto pl-1">{errors.name}</span>}
-                <input
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Name"
-                    className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-4 py-2.5 text-white placeholder-secondary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition"
-                />
+                {success ? (
+                    <div className="text-green-400 text-center py-4 text-lg md:text-xl">
+                        Thank you for reaching out! We'll be in touch soon.
+                    </div>
+                ) : (
+                    <>
+                        {errors.name && <span className="text-xs text-red-400 mr-auto pl-1">{errors.name}</span>}
+                        <input
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            placeholder="Name"
+                            className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-4 py-2.5 text-white placeholder-secondary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition"
+                        />
 
-                {errors.email && <span className="text-xs text-red-400 mr-auto pl-1">{errors.email}</span>}
-                <input
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="Email"
-                    className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-4 py-2.5 text-white placeholder-secondary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition"
-                />
+                        {errors.email && <span className="text-xs text-red-400 mr-auto pl-1">{errors.email}</span>}
+                        <input
+                            name="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            placeholder="Email"
+                            className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-4 py-2.5 text-white placeholder-secondary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition"
+                        />
 
-                {errors.phone && <span className="text-xs text-red-400 mr-auto pl-1">{errors.phone}</span>}
-                <input
-                    name="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="Phone Number"
-                    className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-4 py-2.5 text-white placeholder-secondary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition"
-                />
+                        {errors.phone && <span className="text-xs text-red-400 mr-auto pl-1">{errors.phone}</span>}
+                        <input
+                            name="phone"
+                            type="tel"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            placeholder="Phone Number"
+                            className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-4 py-2.5 text-white placeholder-secondary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition"
+                        />
 
-                {errors.message && <span className="text-xs text-red-400 mr-auto pl-1">{errors.message}</span>}
-                <textarea
-                    name="message"
-                    rows={4}
-                    value={formData.message}
-                    onChange={handleChange}
-                    placeholder="Message"
-                    className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-4 py-2.5 text-white placeholder-secondary resize-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition"
-                />
+                        {errors.message && <span className="text-xs text-red-400 mr-auto pl-1">{errors.message}</span>}
+                        <textarea
+                            name="message"
+                            rows={4}
+                            value={formData.message}
+                            onChange={handleChange}
+                            placeholder="Message"
+                            className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-4 py-2.5 text-white placeholder-secondary resize-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition"
+                        />
 
-                <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                    className="
+                        <motion.button
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.97 }}
+                            onClick={handleSubmit}
+                            disabled={isSubmitting}
+                            className="
                         mt-2 w-fit rounded-lg bg-primary px-6 py-2.5
                         font-medium text-white transition cursor-pointer
                         disabled:opacity-60 disabled:cursor-not-allowed
                     "
-                >
-                    {isSubmitting ? "Sending..." : "Send Message"}
-                </motion.button>
+                        >
+                            {isSubmitting ? "Sending..." : "Send Message"}
+                        </motion.button>
+                    </>
+                )}
             </div>
         </Hero>
     );
