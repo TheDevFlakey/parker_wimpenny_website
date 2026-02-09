@@ -47,7 +47,7 @@ const TermsOfServicePage = () => {
             <h2 className="text-2xl font-bold mb-2 text-primary">Contact Us</h2>
             <p className="mb-4">
                 If you have any questions about these terms of service, please contact us at{" "}
-                <a href="mailto:test:@test.co.uk" className="text-blue-500">
+                <a href="mailto:test:@test.co.uk" target="_blank" className="text-blue-500">
                     test:@test.co.uk
                 </a>
                 .

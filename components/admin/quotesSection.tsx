@@ -28,9 +28,15 @@ export const QuotesSection = ({ quotes, isOpen, onToggle }: Props) => {
         return (
             quote.name.toLowerCase().includes(lowerSearchTerm) ||
             quote.email.toLowerCase().includes(lowerSearchTerm) ||
-            quote.phone_number.toLowerCase().includes(lowerSearchTerm)
+            quote.phone_number.toLowerCase().includes(lowerSearchTerm) ||
+            quote.message.toLowerCase().includes(lowerSearchTerm)
         );
     });
+
+    const createQuote = () => {
+        // Implement create quote functionality here
+        console.log("Create new quote");
+    };
 
     return (
         <CollapsibleSection title="Quotes" isOpen={isOpen} onToggle={onToggle}>
@@ -49,6 +55,7 @@ export const QuotesSection = ({ quotes, isOpen, onToggle }: Props) => {
             <button
                 className={`bg-secondary mb-5 text-accent cursor-pointer mt-4 flex items-center justify-center gap-2 px-5 py-1 bg-size-200 bg-pos-0 hover:bg-pos-100 rounded-lg transition-all duration-500 hover:scale-105`}
                 style={{ backgroundSize: "200% 100%" }}
+                onClick={createQuote}
             >
                 <span className="font-medium">Create Quote</span>
             </button>

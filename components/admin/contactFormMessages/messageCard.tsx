@@ -39,6 +39,7 @@ export const MessageCard = ({ message, onRespond }: MessageCardProps) => {
                         Email
                         <Link
                             href={`mailto:${message.email}`}
+                            target="_blank"
                             className="block text-base text-white font-medium hover:text-primary transition-colors"
                         >
                             {message.email}

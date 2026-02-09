@@ -35,6 +35,7 @@ export const QuoteCard = ({ quote }: { quote: Quote }) => {
                         Email
                         <a
                             href={`mailto:${quote.email}`}
+                            target="_blank"
                             className="block text-base text-white font-medium hover:text-primary transition-colors"
                         >
                             {quote.email}
