@@ -18,9 +18,12 @@ interface Props {
     quotes: Quote[];
     isOpen: boolean;
     onToggle: () => void;
+    onDelete: (id: number) => void;
+    onEdit: (id: number) => void;
+    onCreate: () => void;
 }
 
-export const QuotesSection = ({ quotes, isOpen, onToggle }: Props) => {
+export const QuotesSection = ({ quotes, isOpen, onToggle, onDelete, onEdit, onCreate }: Props) => {
     const [searchTerm, setSearchTerm] = useState("");
 
     const filteredQuotes = quotes.filter((quote) => {
@@ -32,11 +35,6 @@ export const QuotesSection = ({ quotes, isOpen, onToggle }: Props) => {
             quote.message.toLowerCase().includes(lowerSearchTerm)
         );
     });
-
-    const createQuote = () => {
-        // Implement create quote functionality here
-        console.log("Create new quote");
-    };
 
     return (
         <CollapsibleSection title="Quotes" isOpen={isOpen} onToggle={onToggle}>
@@ -55,13 +53,13 @@ export const QuotesSection = ({ quotes, isOpen, onToggle }: Props) => {
             <button
                 className={`bg-secondary mb-5 text-accent cursor-pointer mt-4 flex items-center justify-center gap-2 px-5 py-1 bg-size-200 bg-pos-0 hover:bg-pos-100 rounded-lg transition-all duration-500 hover:scale-105`}
                 style={{ backgroundSize: "200% 100%" }}
-                onClick={createQuote}
+                onClick={onCreate}
             >
                 <span className="font-medium">Create Quote</span>
             </button>
             {quotes.length > 0 && (
                 <>
-                    <QuotesList quotes={filteredQuotes} />
+                    <QuotesList quotes={filteredQuotes} onDelete={onDelete} onEdit={onEdit} />
                     {filteredQuotes.length === 0 && (
                         <div className="text-center text-secondary py-10">
                             No quotes found matching "<span className="text-white">{searchTerm}</span>"

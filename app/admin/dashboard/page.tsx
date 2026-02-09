@@ -7,15 +7,11 @@ import { useSession } from "next-auth/react";
 import { FaShieldAlt } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { MessagesList } from "@/components/admin/contactFormMessages/messagesList";
-import { sub } from "framer-motion/client";
-import { formatDate } from "@/utils/formatDate";
-import { SubscribersList } from "@/components/admin/newsletter/subscribersList";
-import { SendForm } from "@/components/admin/newsletter/sendForm";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa6";
 import { QuotesSection } from "@/components/admin/quotesSection";
 import { MessagesSection } from "@/components/admin/messagesSection";
 import { NewsletterSection } from "@/components/admin/newsletterSection";
+import { EditQuoteModal } from "@/components/admin/quotes/editModal";
+import { CreateQuoteModal } from "@/components/admin/quotes/createModal";
 
 interface Quote {
     id: number;
@@ -47,49 +43,63 @@ const AdminDashboardPage = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
     const [sectionsOpen, setSectionsOpen] = useState({ messages: false, newsletter: false, quotes: false });
-    const [quotes, setQuotes] = useState<Quote[]>([
-        {
-            id: 1,
-            name: "Adam Wimpenny",
-            email: "adamwimps2@outlook.com",
-            phone_number: "07545410930",
-            message: "",
-            createdAt: new Date().toISOString(),
-        },
-    ]);
+    const [quotes, setQuotes] = useState<Quote[]>([]);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editingQuote, setEditingQuote] = useState<Quote>({
+        id: 0,
+        name: "",
+        email: "",
+        phone_number: "",
+        message: "",
+        createdAt: "",
+    });
+    const [isCreateQuoteModalOpen, setIsCreateQuoteModalOpen] = useState(false);
 
     const router = useRouter();
 
+    const fetchQuotes = async () => {
+        if (status === "unauthenticated") {
+            router.push("/");
+            return;
+        }
+
+        if (status === "authenticated") {
+            const res = await fetch("/api/quotes");
+            const result = await res.json();
+            setQuotes(result || []);
+        }
+    };
+
+    const fetchMessages = async () => {
+        if (status === "unauthenticated") {
+            router.push("/");
+            return;
+        }
+
+        if (status === "authenticated") {
+            const res = await fetch("/api/contactForm");
+            const result = await res.json();
+            setMessages(result);
+        }
+    };
+
+    const fetchNewsletterSubscribers = async () => {
+        if (status === "unauthenticated") {
+            router.push("/");
+            return;
+        }
+
+        if (status === "authenticated") {
+            const res = await fetch("/api/newsletter");
+            const result = await res.json();
+            setSubscribers(result);
+        }
+    };
+
     useEffect(() => {
-        const fetchMessages = async () => {
-            if (status === "unauthenticated") {
-                router.push("/");
-                return;
-            }
-
-            if (status === "authenticated") {
-                const res = await fetch("/api/contactForm");
-                const result = await res.json();
-                setMessages(result);
-            }
-        };
-
-        const fetchNewsletterSubscribers = async () => {
-            if (status === "unauthenticated") {
-                router.push("/");
-                return;
-            }
-
-            if (status === "authenticated") {
-                const res = await fetch("/api/newsletter");
-                const result = await res.json();
-                console.log("Newsletter Subscribers:", result);
-                setSubscribers(result);
-            }
-        };
-
         fetchMessages();
         fetchNewsletterSubscribers();
+        fetchQuotes();
     }, [status, router]);
 
     const markAsResponded = async (id: number, responded: boolean) => {
@@ -101,6 +111,54 @@ const AdminDashboardPage = () => {
 
         if (res.ok) {
             setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, responded } : m)));
+        }
+    };
+
+    const deleteQuote = async (id: number) => {
+        const res = await fetch("/api/quotes/delete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id }),
+        });
+
+        if (res.ok) {
+            setQuotes((prev) => prev.filter((q) => q.id !== id));
+        }
+    };
+
+    const editQuote = (id: number) => {
+        const quoteToEdit = quotes.find((q) => q.id === id);
+        if (quoteToEdit) {
+            setEditingQuote(quoteToEdit);
+            setIsEditModalOpen(true);
+        }
+    };
+
+    const updateQuote = async (updatedQuote: Quote) => {
+        const res = await fetch("/api/quotes/update", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedQuote),
+        });
+
+        if (res.ok) {
+            const updatedQuoteWithDate = { ...updatedQuote, createdAt: new Date().toISOString() };
+            setQuotes((prev) => prev.map((q) => (q.id === updatedQuoteWithDate.id ? updatedQuoteWithDate : q)));
+
+            setIsEditModalOpen(false);
+        }
+    };
+
+    const createQuote = async (newQuote: Quote) => {
+        const res = await fetch("/api/quotes/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newQuote),
+        });
+
+        if (res.ok) {
+            fetchQuotes();
+            setIsCreateQuoteModalOpen(false);
         }
     };
 
@@ -120,10 +178,26 @@ const AdminDashboardPage = () => {
                 description="Welcome to the admin dashboard. Here you can manage your contact form messages and send newsletters."
             />
 
+            <EditQuoteModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                editingQuote={editingQuote}
+                onSave={updateQuote}
+            />
+
+            <CreateQuoteModal
+                isOpen={isCreateQuoteModalOpen}
+                onClose={() => setIsCreateQuoteModalOpen(false)}
+                onCreate={createQuote}
+            />
+
             <QuotesSection
                 quotes={quotes}
                 isOpen={sectionsOpen.quotes}
                 onToggle={() => setSectionsOpen((prev) => ({ ...prev, quotes: !prev.quotes }))}
+                onDelete={deleteQuote}
+                onEdit={editQuote}
+                onCreate={() => setIsCreateQuoteModalOpen(true)}
             />
 
             <MessagesSection

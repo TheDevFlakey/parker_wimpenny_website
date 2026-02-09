@@ -11,17 +11,15 @@ interface Quote {
     createdAt: string;
 }
 
-export const QuoteCard = ({ quote }: { quote: Quote }) => {
-    const deleteQuote = (id: number) => {
-        // Implement delete functionality here
-        console.log(`Delete quote with ID: ${id}`);
-    };
-
-    const editQuote = (id: number) => {
-        // Implement edit functionality here
-        console.log(`Edit quote with ID: ${id}`);
-    };
-
+export const QuoteCard = ({
+    quote,
+    onDelete,
+    onEdit,
+}: {
+    quote: Quote;
+    onDelete: (id: number) => void;
+    onEdit: (id: number) => void;
+}) => {
     return (
         <li key={quote.id} className="p-4 border border-primary/20 rounded-lg shadow-sm w-full bg-primary/10">
             <div className="space-y-2">
@@ -52,14 +50,14 @@ export const QuoteCard = ({ quote }: { quote: Quote }) => {
                 </p>
                 <div className="flex gap-2">
                     <button
-                        onClick={() => editQuote(quote.id)}
+                        onClick={() => onEdit(quote.id)}
                         className={`bg-secondary text-accent cursor-pointer mt-4 flex items-center justify-center gap-2 px-5 py-1 bg-size-200 bg-pos-0 hover:bg-pos-100 rounded-lg transition-all duration-500 hover:scale-105`}
                         style={{ backgroundSize: "200% 100%" }}
                     >
                         <span className="font-medium">Edit</span>
                     </button>
                     <button
-                        onClick={() => deleteQuote(quote.id)}
+                        onClick={() => onDelete(quote.id)}
                         className={`bg-red-500 cursor-pointer mt-4 flex items-center justify-center gap-2 px-5 py-1 bg-size-200 bg-pos-0 hover:bg-pos-100 text-white rounded-lg transition-all duration-500 hover:scale-105`}
                         style={{ backgroundSize: "200% 100%" }}
                     >

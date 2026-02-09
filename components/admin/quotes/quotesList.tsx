@@ -11,11 +11,19 @@ interface Quote {
     createdAt: string;
 }
 
-export const QuotesList = ({ quotes }: { quotes: Quote[] }) => {
+export const QuotesList = ({
+    quotes,
+    onDelete,
+    onEdit,
+}: {
+    quotes: Quote[];
+    onDelete: (id: number) => void;
+    onEdit: (id: number) => void;
+}) => {
     return (
         <ul className={`space-y-4 max-h-120 ${quotes.length > 3 ? "pr-4 overflow-y-scroll" : ""}`}>
             {[...quotes].reverse().map((quote) => (
-                <QuoteCard key={quote.id} quote={quote} />
+                <QuoteCard key={quote.id} quote={quote} onDelete={onDelete} onEdit={onEdit} />
             ))}
         </ul>
     );
