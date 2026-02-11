@@ -15,6 +15,8 @@ export async function GET() {
 
         const result = await res.json();
 
+        console.log("Fetched quotes data:", result);
+
         if (result.status) {
             return NextResponse.json(result.quotes, { status: 200 });
         }

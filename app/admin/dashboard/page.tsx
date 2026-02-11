@@ -13,6 +13,12 @@ import { NewsletterSection } from "@/components/admin/newsletterSection";
 import { EditQuoteModal } from "@/components/admin/quotes/editModal";
 import { CreateQuoteModal } from "@/components/admin/quotes/createModal";
 
+interface Material {
+    id: number;
+    name: string;
+    purchased: boolean;
+}
+
 interface Quote {
     id: number;
     name: string;
@@ -20,6 +26,7 @@ interface Quote {
     phone_number: string;
     message: string;
     createdAt: string;
+    materials: Material[];
 }
 
 interface Message {
@@ -52,6 +59,7 @@ const AdminDashboardPage = () => {
         phone_number: "",
         message: "",
         createdAt: "",
+        materials: [],
     });
     const [isCreateQuoteModalOpen, setIsCreateQuoteModalOpen] = useState(false);
 

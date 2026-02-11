@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
     try {
-        const { id, name, email, phone_number, message, createdAt } = await request.json();
+        const { id, name, email, phone_number, message, materials } = await request.json();
 
         if (!id) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ id, name, email, phone_number, message }),
+            body: JSON.stringify({ id, name, email, phone_number, message, materials }),
         });
 
         if (!res.ok) {

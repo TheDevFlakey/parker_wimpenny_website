@@ -6,14 +6,14 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
     try {
-        const { name, email, phone_number, message } = await request.json();
+        const { name, email, phone_number, message, materials } = await request.json();
 
         const res = await fetch(`${process.env.API_URL}/quotes/create`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ name, email, phone_number, message }),
+            body: JSON.stringify({ name, email, phone_number, message, materials }),
         });
 
         if (!res.ok) {
