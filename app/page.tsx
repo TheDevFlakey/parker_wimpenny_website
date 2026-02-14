@@ -5,6 +5,7 @@ import { Hero } from "@/components/shared/hero";
 import { FaList } from "react-icons/fa6";
 import Link from "next/link";
 import { ContactForm } from "@/components/shared/contact-form";
+import { SubcontractingSection } from "@/components/shared/subcontractingSection";
 
 export default function Home() {
     return (
@@ -60,6 +61,8 @@ export default function Home() {
             </Hero>
 
             <ContactForm />
+
+            <SubcontractingSection />
         </div>
     );
 }
