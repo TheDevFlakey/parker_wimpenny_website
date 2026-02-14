@@ -5,6 +5,12 @@ import { CollapsibleSection } from "./collapsibleSection";
 import { useState } from "react";
 import { QuotesList } from "./quotes/quotesList";
 
+interface Material {
+    id: number;
+    name: string;
+    purchased: boolean;
+}
+
 interface Quote {
     id: number;
     name: string;
@@ -12,6 +18,7 @@ interface Quote {
     phone_number: string;
     message: string;
     createdAt: string;
+    materials: Material[];
 }
 
 interface Props {
